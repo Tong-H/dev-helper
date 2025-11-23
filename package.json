@@ -1,0 +1,48 @@
+{
+  "name": "dev-playkit",
+  "version": "0.0.4",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "build"
+  ],
+  "bin": {
+    "dev-playkit": "build/server.js"
+  },
+  "scripts": {
+    "start": "tsup --dts --watch --format cjs --no-splitting",
+    "build": "rm -rf build && tsup",
+    "postinstall": "playwright install"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.1",
+    "@types/express": "^5.0.3",
+    "chalk": "4.1.2",
+    "express": "^5.1.0",
+    "playwright": "^1.56.1",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.2",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "fast-glob": "3.3.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "author": "Tong-H",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tong-H/dev-playkit.git"
+  },
+  "keywords": [
+    "ai"
+  ],
+  "bugs": {
+    "url": "https://github.com/Tong-H/dev-playkit/issues"
+  },
+  "homepage": "https://github.com/Tong-H/dev-playkit#readme",
+  "description": ""
+}

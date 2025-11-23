@@ -1,0 +1,7 @@
+{
+	"your login host": {
+		"user": "",
+		"pwd": "",
+		"description": "use username and password to login for test environment"
+	}
+}

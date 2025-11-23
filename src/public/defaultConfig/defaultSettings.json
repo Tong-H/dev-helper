@@ -1,0 +1,22 @@
+{
+	"networkFilterPatterns": {
+		"description": "// set an array of regex patterns to filter network requests and responses",
+		"value": [
+			"/^\/api\/.*$/"
+		]
+	},
+	"cookiesShouldBeSaved": {
+		"description": "// cookies will be cleaned by default, set an array of hostname to save a set of cookies in cache. // production accounts are usually stable, so it's recommended to save the cookies from production environment to avoid repeated login.",
+		"value": [
+		]
+	},
+	"authSites": {
+		"description": " // set an array of hostname to determine auth pages. // auto login will be triggered if available auth are set in auth file. otherwise, the process will be paused and wait for manual login by user.",
+		"value": [
+		]
+	},
+	"authFilePath": {
+		"description": "// set the path to the auth file",
+		"value": "auth.json"
+	}
+}

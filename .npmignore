@@ -1,0 +1,12 @@
+# Explicitly ignore root-level directories (except build)
+node_modules/
+src/
+
+# Explicitly ignore root-level files
+index.ts
+README.md
+tsconfig.json
+tsup.config.ts
+yarn.lock
+.gitignore
+package.json
