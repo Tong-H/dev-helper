@@ -4,11 +4,11 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { McpServer, } from "@modelcontextprotocol/sdk/server/mcp.js";
 import path, { join } from "path";
 import { readFileSync, } from "fs";
-import { getCacheDirectory } from './helpers/utils';
+import { getCacheDirectory, toolName } from './helpers/utils';
 
 // Create server instance
 const server = new McpServer({
-	name: "dev-playkit",
+	name: toolName,
 	version: "1.0.0",
 })
 
@@ -16,9 +16,9 @@ const scriptPath = path.resolve(__dirname, "server.js")
 const cachePath = getCacheDirectory()
 
 const readme = Object.entries({
-	server: readFileSync(join(__dirname, "/public/readme/server.md"), "utf-8"),
-	monitor: readFileSync(join(__dirname, "/public/readme/monitor.md"), "utf-8"),
-	recorder: readFileSync(join(__dirname, "/public/readme/recorder.md"), "utf-8"),
+	server: readFileSync(join(__dirname, "/public/readme/server.md"), "utf-8").replace(/develop-tool/g, toolName || ""),
+	monitor: readFileSync(join(__dirname, "/public/readme/monitor.md"), "utf-8").replace(/develop-tool/g, toolName || ""),
+	recorder: readFileSync(join(__dirname, "/public/readme/recorder.md"), "utf-8").replace(/develop-tool/g, toolName || ""),
 }).reduce((acc, [key, value]) => ({ ...acc, [key]: value.replace(/{{cachePath}}/img, cachePath)}), {} as Record<string, string>)
 
 

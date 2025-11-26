@@ -5,9 +5,6 @@ Express server providing HTTP APIs to control web pages programmatically for deb
 ## Quick Start
 
 ```bash
-# Install dependencies
-npm i -g @dev-playkit
-
 # Start server (opens in new terminal window by default)
 dev-playkit --urls='["https://example.com"]' --port=3000
 

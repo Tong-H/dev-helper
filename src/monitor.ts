@@ -147,7 +147,7 @@ class Monitor {
 						return { width: viewport[0] || 1920, height: viewport[1] || 1080 }
 					}
 					return this.config.viewport
-				})()	
+				})()
 			});
 
 			this.context.on('page', ((page: Page) => {
@@ -356,12 +356,13 @@ class Monitor {
 					const headers = response.headers();
 					const redirectLocation = headers['location'];
 					const authHost = this.config.authSites?.find(i => new RegExp(`^https?://${i}`).test(redirectLocation))
-					if (authHost) {
+					if (authHost && this.temp === null) {
 						console.log(yellow(`\nINFO: redirect to auth page: ${redirectLocation}`));
 						this.jumpOut(url, page, redirectLocation)
 						try {
-							page.goto(redirectLocation)
+							await page.goto(redirectLocation)
 						} catch (error) {
+							this.temp && ((this.temp as TempState).status = "error");
 							console.error(red('\nERROR: Failed to redirect to auth page:', (error as Error).message));
 						}
 						return
@@ -404,6 +405,9 @@ class Monitor {
 		page.on('load', () => {
 			const _url = page.url();
 			const _hostname = new URL(_url).hostname;
+			if (this.temp && this.temp.status === "error") {
+				return;
+			}
 			if (this.config.authSites && this.config.authSites.includes(_hostname)) {
 				console.log(yellow(`INFO: waiting for login, stop at url:${targetUrl}`));
 				this.removeAllListeners(page);

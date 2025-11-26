@@ -44,6 +44,7 @@ export interface Settings {
 
 export interface TempState {
   targetUrl: string;
+  status?: "error";
 }
 
 export interface LoginAdaptor {

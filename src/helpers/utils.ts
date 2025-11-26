@@ -59,29 +59,29 @@ export const parseArgs = (): Partial<MonitorConfig> & { cacheDir: string } => {
 		}, []);
 		config.cookie = authData;
 	}
-	if ("urls" in config) {
-		try {
-			config.urls = JSON.parse(config.urls);
-		} catch (error) {
-			// Try to handle bracket-wrapped URL strings like [https://example.com]
-			const bracketMatch = config.urls.trim().match(/^\[(.+)\]$/);
-			if (bracketMatch) {
-				const urlsContent = bracketMatch[1];
-				// Split by comma and trim each URL, then quote them
-				const urls = urlsContent.split(',').map((url: string) => url.trim()).filter((url: string) => url.length > 0);
-				const quotedUrls = urls.map((url: string) => JSON.stringify(url));
-				const jsonArray = `[${quotedUrls.join(',')}]`;
-				try {
-					config.urls = JSON.parse(jsonArray);
-				} catch (parseError) {
+		if ("urls" in config) {
+			try {
+				config.urls = JSON.parse(config.urls);
+			} catch (error) {
+				// Try to handle bracket-wrapped URL strings like [https://example.com]
+				const bracketMatch = config.urls.trim().match(/^\[(.+)\]$/);
+				if (bracketMatch) {
+					const urlsContent = bracketMatch[1];
+					// Split by comma and trim each URL, then quote them
+					const urls = urlsContent.split(',').map((url: string) => url.trim()).filter((url: string) => url.length > 0);
+					const quotedUrls = urls.map((url: string) => JSON.stringify(url));
+					const jsonArray = `[${quotedUrls.join(',')}]`;
+					try {
+						config.urls = JSON.parse(jsonArray);
+					} catch (parseError) {
+						throw new Error(`ERROR: urls is not valid json: ${config.urls}`);
+					}
+				} else {
 					throw new Error(`ERROR: urls is not valid json: ${config.urls}`);
 				}
-			} else {
-				throw new Error(`ERROR: urls is not valid json: ${config.urls}`);
 			}
 		}
-	}
-	["authWithoutHost", "networkFilterPatterns"].forEach(key => {
+		["authWithoutHost", "networkFilterPatterns"].forEach(key => {
 		if (key in config) {
 			try {
 				config[key] = JSON.parse(config[key]);
@@ -254,6 +254,7 @@ export const loadJSONData = (filePath: string): any => {
 export function openInNewWindow(): void {
 	const platform = os.platform();
 	const scriptPath = process.argv[1];
+	const _nodePath = process.argv[0];
 	const args = process.argv.slice(2).filter(arg => !arg.includes('--newWindow'));
 	args.push('--newWindow=false'); // Prevent recursive window opening
 
@@ -274,7 +275,7 @@ export function openInNewWindow(): void {
 		// macOS - Use AppleScript to open new Terminal window
 		// Properly escape each argument
 		const escapedArgs = args.map(escapeArg).join(' ');
-		const nodeCommand = `node "${scriptPath}" ${escapedArgs}`;
+		const nodeCommand = `${_nodePath} "${scriptPath}" ${escapedArgs}`;
 		console.log(chalk.blue(`Debug: Executing command: ${nodeCommand}`));
 
 		// For AppleScript, we need to escape backslashes and quotes

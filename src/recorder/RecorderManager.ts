@@ -258,8 +258,15 @@ export default class RecorderManager {
 
 		// Navigate to start URL
 		try {
-			await page.goto(session.startUrl);
-			currentUrl = session.startUrl;
+			const currentPageUrl = page.url();
+			if (currentPageUrl !== session.startUrl) {
+				await page.goto(session.startUrl);
+				await page.waitForLoadState("domcontentloaded");
+				currentUrl = session.startUrl;
+			} else {
+				console.log(green(`[Recorder] Already on start URL, skipping navigation: ${session.startUrl}`));
+				currentUrl = currentPageUrl;
+			}
 		} catch (error) {
 			return {
 				success: false,
@@ -295,12 +302,31 @@ export default class RecorderManager {
 
 				// Handle URL changes (navigation)
 				if (event.url !== currentUrl) {
-					console.log(yellow(`[Recorder] URL changed, waiting for navigation: ${event.url}`));
-					try {
-						await page.waitForURL(event.url, { timeout: 30000 });
-						currentUrl = event.url;
-					} catch (navError) {
-						console.warn(yellow(`[Recorder] Navigation timeout, continuing anyway`));
+					// For pageLoad events, navigate to the URL if needed
+					if (event.type === 'pageLoad') {
+						const currentPageUrl = page.url();
+						if (currentPageUrl !== event.url) {
+							console.log(yellow(`[Recorder] Navigating to: ${event.url}`));
+							try {
+								await page.goto(event.url);
+								await page.waitForLoadState("domcontentloaded");
+								currentUrl = event.url;
+							} catch (navError) {
+								console.warn(yellow(`[Recorder] Navigation failed: ${(navError as Error).message}`));
+							}
+						} else {
+							console.log(green(`[Recorder] Already on URL, skipping navigation: ${event.url}`));
+							currentUrl = currentPageUrl;
+						}
+					} else {
+						// For other events, wait for navigation to complete
+						console.log(yellow(`[Recorder] URL changed, waiting for navigation: ${event.url}`));
+						try {
+							await page.waitForURL(event.url, { timeout: 30000 });
+							currentUrl = event.url;
+						} catch (navError) {
+							console.warn(yellow(`[Recorder] Navigation timeout, continuing anyway`));
+						}
 					}
 				}
 
